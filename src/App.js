@@ -1,10 +1,41 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import Tasks from './components/Tasks/Tasks';
-import NewTask from './components/NewTask/NewTask';
+import Tasks from "./components/Tasks/Tasks";
+import NewTask from "./components/NewTask/NewTask";
+import useHttp from "./hooks/use-http";
+
+/**
+ * task state handles the stored tasks for the application
+ * transformTasks iterates over the data received from the database
+ * transforming the objects into the correct format for the front end
+ * the useHttp hook then has the url and data passed as arguments
+ * and isLoading, error and sendRequest(has alias) are destructured out of itd
+ */
 
 function App() {
-    
+  const [tasks, setTasks] = useState([]);
+
+  const transformTasks = (tasksObj) => {
+    const loadedTasks = [];
+
+    for (const taskKey in tasksObj) {
+      loadedTasks.push({ id: taskKey, text: tasksObj[taskKey].text });
+    }
+
+    setTasks(loadedTasks);
+  };
+
+  const {
+    isLoading,
+    error,
+    sendRequest: fetchTasks,
+  } = useHttp(
+    {
+      url: "https://custom-hooks-82674-default-rtdb.firebaseio.com/tasks.json",
+    },
+    transformTasks
+  );
+
   useEffect(() => {
     fetchTasks();
   }, []);

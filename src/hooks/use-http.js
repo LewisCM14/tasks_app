@@ -3,6 +3,8 @@ import { useState } from "react";
 /**
  * Custom hook to handle HTTP requests
  * requestConfig handles POST or GET requests configuration
+ * if requestConfig is set, apply it, else default 
+ * method to 'GET', headers to an empty object and body to null
  * Assumes always working with JSON data.
  * sendRequest checks the response of the request and collects the data,
  * This data is then passed to the applyData function.
@@ -19,9 +21,9 @@ const useHttp = (requestConfig, applyData) => {
     setError(null);
     try {
       const response = await fetch(requestConfig.url, {
-        method: requestConfig.method,
-        headers: requestConfig.headers,
-        body: JSON.stringify(requestConfig.body),
+        method: requestConfig.method ? requestConfig.method : 'GET',
+        headers: requestConfig.headers ? requestConfig.headers : {},
+        body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
       });
 
       if (!response.ok) {
